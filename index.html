@@ -8,6 +8,9 @@
     <link rel="stylesheet" href="TemplateData/style.css">
   </head>
   <body>
+    <button type="button" id="request_permission">モーションの許可</button><br>
+    <div id="unity-container" class="unity-desktop">
+      <canvas id="unity-canvas"></canvas>
     <div id="unity-container" class="unity-desktop">
       <canvas id="unity-canvas" width=960 height=600></canvas>
       <div id="unity-loading-bar">
@@ -23,12 +26,24 @@
         <div id="unity-build-title">test2</div>
       </div>
     </div>
-    <script>
+    <script type="text/javascript">
+      document.getElementById("request_permission").addEventListener("click", function(){
+        if (
+          DeviceOrientationEvent &&
+          DeviceOrientationEvent.requestPermission &&
+          typeof DeviceOrientationEvent.requestPermission === 'function'
+        ) {
+          DeviceOrientationEvent.requestPermission();
+        }
+      })
       var container = document.querySelector("#unity-container");
       var canvas = document.querySelector("#unity-canvas");
       var loadingBar = document.querySelector("#unity-loading-bar");
       var progressBarFull = document.querySelector("#unity-progress-bar-full");
       var fullscreenButton = document.querySelector("#unity-fullscreen-button");
+      canvas.style.width = "600px";
+      canvas.style.height = "900px";
+      loadingBar.style.display = "block";
       var warningBanner = document.querySelector("#unity-warning");
 
       // Shows a temporary message banner/ribbon for a few seconds, or
