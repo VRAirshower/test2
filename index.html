@@ -23,6 +23,7 @@
         <div id="unity-build-title">test2</div>
       </div>
     </div>
+
     <script>
       var container = document.querySelector("#unity-container");
       var canvas = document.querySelector("#unity-canvas");
@@ -54,7 +55,19 @@
         }
         updateBannerVisibility();
       }
-
+      if (typeof DeviceMotionEvent.requestPermission === 'function') {
+        DeviceMotionEvent.requestPermission().then(permissionState => {
+          if (permissionState === 'granted') {
+            window.addEventListener('devicemotion', function(event) {
+              var r = event.rotationRate;
+              if(gameLoaded == true){
+                gameInstance.SendMessage('GyroHandler', 'SetRotationRate', r.alpha+'|'+r.beta+'|'+r.gamma);
+              }
+            });
+          }
+        })
+      .catch(console.error);
+      }
       var buildUrl = "Build";
       var loaderUrl = buildUrl + "/test10.loader.js";
       var config = {
