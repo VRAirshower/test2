@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="TemplateData/style.css">
   </head>
   <body>
+    <button type="button" id="request_permission">モーションの許可</button><br>
     <div id="unity-container" class="unity-desktop">
       <canvas id="unity-canvas" width=960 height=600></canvas>
       <div id="unity-loading-bar">
@@ -24,16 +25,15 @@
       </div>
     </div>
     <script>
-	// ②ボタン押下時のアクションを追加
-        document.getElementById("request_permission").addEventListener("click", function(){
-          if (
-            DeviceOrientationEvent &&
-            DeviceOrientationEvent.requestPermission &&
-            typeof DeviceOrientationEvent.requestPermission === 'function'
-          ) {
-            DeviceOrientationEvent.requestPermission();
-          }
-        })
+      document.getElementById("request_permission").addEventListener("click", function(){
+        if (
+          DeviceOrientationEvent &&
+          DeviceOrientationEvent.requestPermission &&
+          typeof DeviceOrientationEvent.requestPermission === 'function'
+        ) {
+          DeviceOrientationEvent.requestPermission();
+        }
+      })
     </script>
     <script>
       var container = document.querySelector("#unity-container");
