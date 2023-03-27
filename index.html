@@ -44,9 +44,6 @@
       var loadingBar = document.querySelector("#unity-loading-bar");
       var progressBarFull = document.querySelector("#unity-progress-bar-full");
       var fullscreenButton = document.querySelector("#unity-fullscreen-button");
-      canvas.style.width = "600px";
-      canvas.style.height = "900px";
-      loadingBar.style.display = "block";
       var warningBanner = document.querySelector("#unity-warning");
 
       // Shows a temporary message banner/ribbon for a few seconds, or
@@ -101,6 +98,9 @@
         document.getElementsByTagName('head')[0].appendChild(meta);
         container.className = "unity-mobile";
         canvas.className = "unity-mobile";
+        canvas.style.width = "600px";
+        canvas.style.height = "900px";
+        loadingBar.style.display = "block";
 
         // To lower canvas resolution on mobile devices to gain some
         // performance, uncomment the following line:
