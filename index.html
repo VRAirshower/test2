@@ -56,11 +56,12 @@
       }
 
       var buildUrl = "Build";
-      var loaderUrl = buildUrl + "/BuildTest1Baseline.loader.js";
+      var buildVersion = "?v=3ebbba8";
+      var loaderUrl = buildUrl + "/BuildTest1Baseline.loader.js" + buildVersion;
       var config = {
-        dataUrl: buildUrl + "/BuildTest1Baseline.data",
-        frameworkUrl: buildUrl + "/BuildTest1Baseline.framework.js",
-        codeUrl: buildUrl + "/BuildTest1Baseline.wasm",
+        dataUrl: buildUrl + "/BuildTest1Baseline.data" + buildVersion,
+        frameworkUrl: buildUrl + "/BuildTest1Baseline.framework.js" + buildVersion,
+        codeUrl: buildUrl + "/BuildTest1Baseline.wasm" + buildVersion,
         streamingAssetsUrl: "StreamingAssets",
         companyName: "DefaultCompany",
         productName: "Nagano",
