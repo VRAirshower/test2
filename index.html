@@ -11,17 +11,18 @@
 const loading = document.querySelector("#loading");
 const start = document.querySelector("#start");
 const canvas = document.querySelector("#unity-canvas");
-const build = "Build/BuildTest1Baseline";
+const build = "Build/Test2WebGL";
 const loader = document.createElement("script");
 
 loader.src = build + ".loader.js";
 loader.onload = () => createUnityInstance(canvas, {
-  dataUrl: build + ".data",
-  frameworkUrl: build + ".framework.js",
-  codeUrl: build + ".wasm",
+  dataUrl: build + ".data.unityweb",
+  frameworkUrl: build + ".framework.js.unityweb",
+  codeUrl: build + ".wasm.unityweb",
   streamingAssetsUrl: "StreamingAssets",
   companyName: "DefaultCompany",
-  productName: "Nagano"
+  productName: "Nagano",
+  productVersion: "0.1"
 }).then(() => {
   loading.hidden = true;
   start.hidden = false;
