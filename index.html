@@ -6,7 +6,6 @@
     <title>Unity WebGL Player | Nagano</title>
     <link rel="shortcut icon" href="TemplateData/favicon.ico">
     <link rel="stylesheet" href="TemplateData/style.css">
-    <style>/* nagano3d-touch-action */ html, body { overflow: hidden; overscroll-behavior: none; } #unity-canvas { touch-action: none; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }</style>
   </head>
   <body>
     <div id="unity-container" class="unity-desktop">
@@ -57,11 +56,11 @@
       }
 
       var buildUrl = "Build";
-      var loaderUrl = buildUrl + "/Test2Commentary-20261102-192514-290.loader.js";
+      var loaderUrl = buildUrl + "/Test2Commentary-20261104-121252-305.loader.js";
       var config = {
-        dataUrl: buildUrl + "/Test2Commentary-20261102-192514-290.data.unityweb",
-        frameworkUrl: buildUrl + "/Test2Commentary-20261102-192514-290.framework.js.unityweb",
-        codeUrl: buildUrl + "/Test2Commentary-20261102-192514-290.wasm.unityweb",
+        dataUrl: buildUrl + "/Test2Commentary-20261104-121252-305.data.unityweb",
+        frameworkUrl: buildUrl + "/Test2Commentary-20261104-121252-305.framework.js.unityweb",
+        codeUrl: buildUrl + "/Test2Commentary-20261104-121252-305.wasm.unityweb",
         streamingAssetsUrl: "StreamingAssets",
         companyName: "DefaultCompany",
         productName: "Nagano",
@@ -76,7 +75,7 @@
       // the canvas DOM size and WebGL render target sizes yourself.
       // config.matchWebGLToCanvasSize = false;
 
-      if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent) || (navigator.maxTouchPoints > 0 && /Macintosh/i.test(navigator.userAgent))) {
+      if (/iPhone|iPod|Android/i.test(navigator.userAgent)) {
         // Mobile device style: fill the whole browser client area with the game canvas:
 
         var meta = document.createElement('meta');
@@ -90,7 +89,7 @@
         // performance, uncomment the following line:
         // config.devicePixelRatio = 1;
 
-        // unityShowBanner('WebGL builds are not supported on mobile devices.');
+        unityShowBanner('WebGL builds are not supported on mobile devices.');
       } else {
         // Desktop style: Render the game canvas in a window that can be maximized to fullscreen:
 
