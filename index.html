@@ -6,6 +6,68 @@
     <title>Unity WebGL Player | Nagano</title>
     <link rel="shortcut icon" href="TemplateData/favicon.ico">
     <link rel="stylesheet" href="TemplateData/style.css">
+    <style id="nagano-ipad-fs-style">
+      html.nagano-ipad-fullscreen,
+      body.nagano-ipad-fullscreen {
+        margin: 0 !important;
+        padding: 0 !important;
+        width: 100% !important;
+        height: 100% !important;
+        overflow: hidden !important;
+        position: fixed !important;
+        left: 0 !important;
+        top: 0 !important;
+        right: 0 !important;
+        bottom: 0 !important;
+        background: #0b0d12 !important;
+        overscroll-behavior: none !important;
+        touch-action: none !important;
+        -webkit-user-select: none !important;
+        user-select: none !important;
+      }
+      body.nagano-ipad-fullscreen #unity-container {
+        position: fixed !important;
+        left: 0 !important;
+        top: 0 !important;
+        transform: none !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        z-index: 9999 !important;
+      }
+      body.nagano-ipad-fullscreen #unity-canvas {
+        display: block !important;
+        touch-action: none !important;
+      }
+      body.nagano-ipad-fullscreen #unity-footer {
+        display: none !important;
+      }
+      #nagano-exit-fullscreen-btn {
+        display: none;
+        position: fixed;
+        right: max(12px, env(safe-area-inset-right, 12px));
+        bottom: max(12px, env(safe-area-inset-bottom, 12px));
+        width: 38px;
+        height: 38px;
+        padding: 0;
+        margin: 0;
+        border-radius: 10px;
+        border: 1px solid rgba(255, 255, 255, 0.34);
+        background: rgba(16, 20, 26, 0.66);
+        -webkit-backdrop-filter: blur(8px);
+        backdrop-filter: blur(8px);
+        color: rgba(255, 255, 255, 0.94);
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        z-index: 10002;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
+        touch-action: manipulation;
+        -webkit-tap-highlight-color: transparent;
+      }
+      body.nagano-ipad-fullscreen #nagano-exit-fullscreen-btn {
+        display: flex;
+      }
+    </style>
   </head>
   <body>
     <div id="unity-container" class="unity-desktop">
@@ -56,11 +118,11 @@
       }
 
       var buildUrl = "Build";
-      var loaderUrl = buildUrl + "/Test2Commentary-20261104-121252-305.loader.js";
+      var loaderUrl = buildUrl + "/Test2Commentary-20261104-142331-453.loader.js";
       var config = {
-        dataUrl: buildUrl + "/Test2Commentary-20261104-121252-305.data.unityweb",
-        frameworkUrl: buildUrl + "/Test2Commentary-20261104-121252-305.framework.js.unityweb",
-        codeUrl: buildUrl + "/Test2Commentary-20261104-121252-305.wasm.unityweb",
+        dataUrl: buildUrl + "/Test2Commentary-20261104-142331-453.data.unityweb",
+        frameworkUrl: buildUrl + "/Test2Commentary-20261104-142331-453.framework.js.unityweb",
+        codeUrl: buildUrl + "/Test2Commentary-20261104-142331-453.wasm.unityweb",
         streamingAssetsUrl: "StreamingAssets",
         companyName: "DefaultCompany",
         productName: "Nagano",
@@ -106,8 +168,102 @@
           progressBarFull.style.width = 100 * progress + "%";
         }).then((unityInstance) => {
           loadingBar.style.display = "none";
+          var isIpadBrowser = /iPad/i.test(navigator.userAgent) ||
+            (/Macintosh/i.test(navigator.userAgent) && navigator.maxTouchPoints > 1);
+          var ipadFullscreenActive = false;
+          var exitFsBtn = document.createElement('button');
+          exitFsBtn.id = 'nagano-exit-fullscreen-btn';
+          exitFsBtn.type = 'button';
+          exitFsBtn.setAttribute('aria-label', '全画面を終了');
+          exitFsBtn.title = '全画面を終了';
+          exitFsBtn.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9h5V4M20 9h-5V4M4 15h5v5M20 15h-5v5"/></svg>';
+          document.body.appendChild(exitFsBtn);
+
+          function syncIpadFullscreenSize() {
+            if (!ipadFullscreenActive) return;
+            var vv = window.visualViewport;
+            var vw = Math.round((vv && Math.abs((vv.scale || 1) - 1) < 0.05 ? vv.width : 0) || window.innerWidth || 960);
+            var vh = Math.round((vv && Math.abs((vv.scale || 1) - 1) < 0.05 ? vv.height : 0) || window.innerHeight || 600);
+            window.scrollTo(0, 0);
+            container.style.width = vw + 'px';
+            container.style.height = vh + 'px';
+            canvas.style.width = vw + 'px';
+            canvas.style.height = vh + 'px';
+          }
+
+          function enterIpadInBrowserFullscreen() {
+            if (ipadFullscreenActive) return;
+            ipadFullscreenActive = true;
+            var vp = document.getElementById('nagano-ipad-fs-viewport');
+            if (!vp) {
+              vp = document.createElement('meta');
+              vp.id = 'nagano-ipad-fs-viewport';
+              vp.name = 'viewport';
+              vp.content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover';
+              document.head.appendChild(vp);
+            }
+            document.documentElement.classList.add('nagano-ipad-fullscreen');
+            document.body.classList.add('nagano-ipad-fullscreen');
+            syncIpadFullscreenSize();
+            requestAnimationFrame(syncIpadFullscreenSize);
+            setTimeout(syncIpadFullscreenSize, 60);
+            setTimeout(syncIpadFullscreenSize, 220);
+          }
+
+          function exitIpadInBrowserFullscreen() {
+            if (!ipadFullscreenActive) return;
+            ipadFullscreenActive = false;
+            document.documentElement.classList.remove('nagano-ipad-fullscreen');
+            document.body.classList.remove('nagano-ipad-fullscreen');
+            var vp = document.getElementById('nagano-ipad-fs-viewport');
+            if (vp && vp.parentNode) {
+              vp.parentNode.removeChild(vp);
+            }
+            container.style.width = '';
+            container.style.height = '';
+            canvas.style.width = '960px';
+            canvas.style.height = '600px';
+          }
+
+          exitFsBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            exitIpadInBrowserFullscreen();
+          });
+
+          if (isIpadBrowser) {
+            document.addEventListener('touchmove', function(e) {
+              if (ipadFullscreenActive && e.target !== exitFsBtn && !exitFsBtn.contains(e.target)) {
+                e.preventDefault();
+              }
+            }, { passive: false });
+            document.addEventListener('gesturestart', function(e) {
+              if (ipadFullscreenActive) e.preventDefault();
+            }, { passive: false });
+            document.addEventListener('gesturechange', function(e) {
+              if (ipadFullscreenActive) e.preventDefault();
+            }, { passive: false });
+            window.addEventListener('resize', syncIpadFullscreenSize);
+            window.addEventListener('orientationchange', function() {
+              setTimeout(syncIpadFullscreenSize, 80);
+              setTimeout(syncIpadFullscreenSize, 260);
+            });
+            if (window.visualViewport) {
+              window.visualViewport.addEventListener('resize', syncIpadFullscreenSize);
+              window.visualViewport.addEventListener('scroll', syncIpadFullscreenSize);
+            }
+            document.addEventListener('keydown', function(e) {
+              if (ipadFullscreenActive && e.key === 'Escape') {
+                exitIpadInBrowserFullscreen();
+              }
+            });
+          }
+
           fullscreenButton.onclick = () => {
-            unityInstance.SetFullscreen(1);
+            if (isIpadBrowser) {
+              enterIpadInBrowserFullscreen();
+            } else {
+              unityInstance.SetFullscreen(1);
+            }
           };
         }).catch((message) => {
           alert(message);
