@@ -118,11 +118,11 @@
       }
 
       var buildUrl = "Build";
-      var loaderUrl = buildUrl + "/Test2Commentary-20261104-142331-453.loader.js";
+      var loaderUrl = buildUrl + "/Test2Commentary-20261105-112551-806.loader.js";
       var config = {
-        dataUrl: buildUrl + "/Test2Commentary-20261104-142331-453.data.unityweb",
-        frameworkUrl: buildUrl + "/Test2Commentary-20261104-142331-453.framework.js.unityweb",
-        codeUrl: buildUrl + "/Test2Commentary-20261104-142331-453.wasm.unityweb",
+        dataUrl: buildUrl + "/Test2Commentary-20261105-112551-806.data.unityweb",
+        frameworkUrl: buildUrl + "/Test2Commentary-20261105-112551-806.framework.js.unityweb",
+        codeUrl: buildUrl + "/Test2Commentary-20261105-112551-806.wasm.unityweb",
         streamingAssetsUrl: "StreamingAssets",
         companyName: "DefaultCompany",
         productName: "Nagano",
@@ -229,6 +229,11 @@
             e.stopPropagation();
             exitIpadInBrowserFullscreen();
           });
+          exitFsBtn.addEventListener('touchend', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            exitIpadInBrowserFullscreen();
+          }, { passive: false });
 
           if (isIpadBrowser) {
             document.addEventListener('touchmove', function(e) {
