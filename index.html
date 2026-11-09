@@ -157,15 +157,83 @@
       body.nagano-ipad-fullscreen #nagano-exit-fullscreen-btn {
         display: flex;
       }
+      #unity-canvas {
+        background: #0d1119 !important;
+      }
+      #unity-loading-bar.nagano-has-loading-guide {
+        position: absolute !important;
+        left: 0 !important;
+        top: 0 !important;
+        transform: none !important;
+        width: 100% !important;
+        height: calc(100% - 38px) !important;
+        box-sizing: border-box !important;
+        padding: 12px 16px 10px 16px !important;
+        background: radial-gradient(circle at 50% 42%, #192233 0%, #0c1018 100%) !important;
+        z-index: 25 !important;
+        text-align: center !important;
+      }
+      .unity-mobile #unity-loading-bar.nagano-has-loading-guide,
+      body.nagano-ipad-fullscreen #unity-loading-bar.nagano-has-loading-guide {
+        height: 100% !important;
+      }
+      #nagano-loading-guide-img {
+        display: block;
+        width: auto;
+        height: auto;
+        max-width: min(100%, 896px);
+        max-height: calc(100% - 46px);
+        margin: 0 auto;
+        object-fit: contain;
+        filter: drop-shadow(0 8px 22px rgba(0, 0, 0, 0.5));
+        user-select: none;
+        -webkit-user-drag: none;
+      }
+      #nagano-loading-gauge-row {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        height: 36px;
+        margin-top: 8px;
+      }
+      #nagano-loading-gauge-row #unity-logo {
+        width: 28px !important;
+        height: 24px !important;
+        margin: 0 !important;
+        background-size: contain !important;
+        flex: 0 0 auto;
+      }
+      #nagano-loading-gauge-row #unity-progress-bar-empty {
+        margin: 0 !important;
+        flex: 0 0 141px;
+      }
+      #nagano-loading-gauge-row #unity-progress-bar-full {
+        margin: 0 !important;
+      }
+      #nagano-loading-status-text {
+        color: rgba(235, 243, 255, 0.92);
+        font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Yu Gothic UI", "Meiryo", sans-serif;
+        font-size: 14px;
+        font-weight: 600;
+        letter-spacing: 0.03em;
+        min-width: 112px;
+        text-align: left;
+        user-select: none;
+      }
     </style>
   </head>
   <body>
     <div id="unity-container" class="unity-desktop">
       <canvas id="unity-canvas" width=960 height=600></canvas>
-      <div id="unity-loading-bar">
-        <div id="unity-logo"></div>
-        <div id="unity-progress-bar-empty">
-          <div id="unity-progress-bar-full"></div>
+      <div id="unity-loading-bar" class="nagano-has-loading-guide">
+        <img id="nagano-loading-guide-img" src="TemplateData/guide_loading_screen.png" alt="アプリのつかいかた ＆ コズミックレイとは？" />
+        <div id="nagano-loading-gauge-row">
+          <div id="unity-logo"></div>
+          <div id="unity-progress-bar-empty">
+            <div id="unity-progress-bar-full"></div>
+          </div>
+          <div id="nagano-loading-status-text">読み込み中...</div>
         </div>
       </div>
       <div id="unity-warning"> </div>
@@ -208,11 +276,11 @@
       }
 
       var buildUrl = "Build";
-      var loaderUrl = buildUrl + "/Test2Commentary-20261109-131157-602.loader.js";
+      var loaderUrl = buildUrl + "/Test2Commentary-20261109-133326-557.loader.js";
       var config = {
-        dataUrl: buildUrl + "/Test2Commentary-20261109-131157-602.data.unityweb",
-        frameworkUrl: buildUrl + "/Test2Commentary-20261109-131157-602.framework.js.unityweb",
-        codeUrl: buildUrl + "/Test2Commentary-20261109-131157-602.wasm.unityweb",
+        dataUrl: buildUrl + "/Test2Commentary-20261109-133326-557.data.unityweb",
+        frameworkUrl: buildUrl + "/Test2Commentary-20261109-133326-557.framework.js.unityweb",
+        codeUrl: buildUrl + "/Test2Commentary-20261109-133326-557.wasm.unityweb",
         streamingAssetsUrl: "StreamingAssets",
         companyName: "DefaultCompany",
         productName: "Nagano",
@@ -256,6 +324,8 @@
       script.onload = () => {
         createUnityInstance(canvas, config, (progress) => {
           progressBarFull.style.width = 100 * progress + "%";
+          var loadingStatusEl = document.getElementById("nagano-loading-status-text");
+          if (loadingStatusEl) loadingStatusEl.textContent = "読み込み中... " + Math.round(100 * progress) + "%";
         }).then((unityInstance) => {
           loadingBar.style.display = "none";
           var isIpadBrowser = /iPad/i.test(navigator.userAgent) ||
