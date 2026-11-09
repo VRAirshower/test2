@@ -6,6 +6,96 @@
     <title>Unity WebGL Player | Nagano</title>
     <link rel="shortcut icon" href="TemplateData/favicon.ico">
     <link rel="stylesheet" href="TemplateData/style.css">
+    <script id="nagano-webaudio-unlock">
+      (function() {
+        var trackedContexts = [];
+        var warmedContexts = typeof WeakSet !== 'undefined' ? new WeakSet() : null;
+        var htmlAudioUnlocked = false;
+        var silentAudioEl = null;
+
+        var OrigAC = window.AudioContext || window.webkitAudioContext;
+        if (OrigAC && !OrigAC.__naganoWrapped) {
+          try {
+            var WrappedAC = class extends OrigAC {
+              constructor() {
+                super(...arguments);
+                trackedContexts.push(this);
+              }
+            };
+            WrappedAC.__naganoWrapped = true;
+            if (window.AudioContext) window.AudioContext = WrappedAC;
+            if (window.webkitAudioContext) window.webkitAudioContext = WrappedAC;
+          } catch (_) {}
+        }
+
+        function buildSilentWavUrl() {
+          var samples = 320;
+          var buf = new Uint8Array(44 + samples);
+          var str = function(off, s) { for (var i = 0; i < s.length; i++) buf[off + i] = s.charCodeAt(i); };
+          var u32 = function(off, v) { buf[off] = v & 255; buf[off+1] = (v >> 8) & 255; buf[off+2] = (v >> 16) & 255; buf[off+3] = (v >> 24) & 255; };
+          var u16 = function(off, v) { buf[off] = v & 255; buf[off+1] = (v >> 8) & 255; };
+          str(0, 'RIFF'); u32(4, 36 + samples); str(8, 'WAVE');
+          str(12, 'fmt '); u32(16, 16); u16(20, 1); u16(22, 1);
+          u32(24, 8000); u32(28, 8000); u16(32, 1); u16(34, 8);
+          str(36, 'data'); u32(40, samples);
+          for (var j = 44; j < 44 + samples; j++) buf[j] = 128;
+          return URL.createObjectURL(new Blob([buf], { type: 'audio/wav' }));
+        }
+
+        function unlockAndResumeAudio(isTrustedEndGesture) {
+          try {
+            if (navigator.audioSession && navigator.audioSession.type !== 'playback') {
+              navigator.audioSession.type = 'playback';
+            }
+          } catch (_) {}
+
+          if (isTrustedEndGesture && !htmlAudioUnlocked) {
+            try {
+              if (!silentAudioEl) {
+                silentAudioEl = new Audio(buildSilentWavUrl());
+                silentAudioEl.setAttribute('playsinline', 'true');
+                silentAudioEl.volume = 0.01;
+              }
+              var p = silentAudioEl.play();
+              if (p && typeof p.then === 'function') {
+                p.then(function() { htmlAudioUnlocked = true; }).catch(function() {});
+              } else {
+                htmlAudioUnlocked = true;
+              }
+            } catch (_) {}
+          }
+
+          for (var i = 0; i < trackedContexts.length; i++) {
+            var ctx = trackedContexts[i];
+            if (!ctx || ctx.state === 'closed') continue;
+            try {
+              if (ctx.state !== 'running') {
+                var r = ctx.resume();
+                if (r && typeof r.catch === 'function') r.catch(function() {});
+              }
+              if (warmedContexts && !warmedContexts.has(ctx)) {
+                var b = ctx.createBuffer(1, 1, 22050);
+                var src = ctx.createBufferSource();
+                src.buffer = b;
+                src.connect(ctx.destination);
+                src.start(0);
+                if (ctx.state === 'running') warmedContexts.add(ctx);
+              }
+            } catch (_) {}
+          }
+        }
+
+        ['touchstart', 'pointerdown', 'mousedown'].forEach(function(ev) {
+          window.addEventListener(ev, function() { unlockAndResumeAudio(false); }, { capture: true, passive: true });
+        });
+        ['touchend', 'pointerup', 'click', 'keydown'].forEach(function(ev) {
+          window.addEventListener(ev, function() { unlockAndResumeAudio(true); }, { capture: true, passive: true });
+        });
+        document.addEventListener('visibilitychange', function() {
+          if (!document.hidden) unlockAndResumeAudio(false);
+        });
+      })();
+    </script>
     <style id="nagano-ipad-fs-style">
       html.nagano-ipad-fullscreen,
       body.nagano-ipad-fullscreen {
@@ -118,11 +208,11 @@
       }
 
       var buildUrl = "Build";
-      var loaderUrl = buildUrl + "/Test2Commentary-20261105-112551-806.loader.js";
+      var loaderUrl = buildUrl + "/Test2Commentary-20261109-131157-602.loader.js";
       var config = {
-        dataUrl: buildUrl + "/Test2Commentary-20261105-112551-806.data.unityweb",
-        frameworkUrl: buildUrl + "/Test2Commentary-20261105-112551-806.framework.js.unityweb",
-        codeUrl: buildUrl + "/Test2Commentary-20261105-112551-806.wasm.unityweb",
+        dataUrl: buildUrl + "/Test2Commentary-20261109-131157-602.data.unityweb",
+        frameworkUrl: buildUrl + "/Test2Commentary-20261109-131157-602.framework.js.unityweb",
+        codeUrl: buildUrl + "/Test2Commentary-20261109-131157-602.wasm.unityweb",
         streamingAssetsUrl: "StreamingAssets",
         companyName: "DefaultCompany",
         productName: "Nagano",
